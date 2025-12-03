@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MessMate — Tiffin Service Prototype</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#06b6d4;
+      --glass: rgba(255,255,255,0.04);
+      --success:#10b981;
+      --danger:#ef4444;
+      --radius:14px;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg, #071029 0%, #071826 40%, #071a13 100%);
+      color:#e6eef6;
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .container{
+      width:100%;
+      max-width:1100px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;
+      padding:22px;
+      box-shadow: 0 10px 40px rgba(2,6,23,0.7);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    header.top{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#04111a;font-size:20px;box-shadow:0 6px 18px rgba(6,182,212,0.08)
+    }
+    .brand h1{margin:0;font-size:18px}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    .controls{display:flex;gap:10px;align-items:center}
+    .btn{
+      background:linear-gradient(180deg,#0ea5a4,#02827f);
+      color:#07111a;padding:10px 14px;border-radius:12px;border:none;font-weight:600;cursor:pointer;
+      box-shadow:0 6px 18px rgba(2,130,127,0.12);
+    }
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);box-shadow:none}
+    .btn.small{padding:8px 10px;font-size:14px;border-radius:10px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+    }
+
+    /* Left column */
+    .left {
+      padding:18px;
+      border-radius:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.02);
+      min-height:420px;
+    }
+
+    .menu-row{display:flex;gap:12px;flex-wrap:wrap}
+    .menu-card{
+      flex:1 1 220px;
+      background:var(--card);
+      border-radius:12px;
+      padding:12px;
+      border:1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 6px 18px rgba(3,6,11,0.4);
+    }
+    .menu-card h3{margin:0;font-size:16px}
+    .menu-card p{margin:8px 0 0;color:var(--muted);font-size:13px}
+
+    .quick-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .chip{background:var(--glass);padding:8px 10px;border-radius:10px;font-weight:600;color:var(--muted);cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
+
+    /* Right column */
+    .right{
+      padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)
+    }
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.02)}
+    .muted{color:var(--muted);font-size:13px}
+
+    .tracker{
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .progress{
+      height:10px;border-radius:10px;background:rgba(255,255,255,0.03);overflow:hidden;
+    }
+    .progress > div{height:100%;background:linear-gradient(90deg,var(--accent),#8b5cf6);width:0%;transition:width 700ms ease}
+
+    .stars{display:flex;gap:6px;align-items:center}
+    .stars i{color:gold;font-size:18px;cursor:pointer}
+
+    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;inset:0;background:linear-gradient(90deg, rgba(1,6,11,0.7), rgba(3,6,11,0.7));display:none;align-items:center;justify-content:center;z-index:999;
+    }
+    .modal{
+      width:100%;max-width:760px;background:linear-gradient(180deg,#071425,#081726);border-radius:16px;padding:18px;border:1px solid rgba(255,255,255,0.03)
+    }
+    .form-row{display:flex;gap:10px;margin-bottom:10px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type="text"], select, textarea{
+      width:100%;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit;font-size:14px;
+    }
+
+    /* small screens */
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr; }
+      .right{order:2}
+    }
+
+    /* Login banner */
+    .login-banner{display:flex;gap:16px;align-items:center;background:linear-gradient(90deg,#06202a,#02121b);padding:14px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.02)}
+    .small-muted{font-size:12px;color:var(--muted)}
+    .owner-toggle{background:linear-gradient(90deg,#f97316,#f43f5e);padding:8px 10px;border-radius:10px;color:#051018;font-weight:700;border:none;cursor:pointer}
+
+    /* nice tags */
+    .tag{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted);font-size:13px;margin-right:6px;border:1px solid rgba(255,255,255,0.02)}
+  </style>
+</head>
+<body>
+  <div class="container" role="application" aria-label="MessMate prototype">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">MM</div>
+        <div>
+          <h1>MessMate</h1>
+          <p>Meal customization • Feedback • Delivery tracking</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div id="userInfo" class="small-muted">Not logged in</div>
+        <button class="btn small" id="btnLogin">Login</button>
+        <button class="btn ghost small" id="btnOwner">Owner View</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <main class="left" id="mainLeft">
+        <div class="login-banner">
+          <div>
+            <strong>Today's Menu</strong>
+            <div class="small-muted">Freshly cooked, delivered hot</div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div class="small-muted">Subscription: <strong id="subPlan">Monthly</strong></div>
+            <div class="small-muted">Next delivery: <strong id="nextDelivery">1:00 PM</strong></div>
+          </div>
+        </div>
+
+        <section>
+          <div class="menu-row" id="menuRow">
+            <!-- menu cards injected -->
+          </div>
+
+          <div class="quick-actions" style="margin-top:12px">
+            <div class="chip" id="quickRate">⭐ Rate Today</div>
+            <div class="chip" id="customizeBtn">🍽 Customize Meal</div>
+            <div class="chip" id="trackBtn">🛵 Track Delivery</div>
+            <div class="chip" id="contactBtn">☎ Contact Mess</div>
+          </div>
+        </section>
+
+        <section style="margin-top:14px">
+          <div class="card">
+            <strong>Weekly Menu Preview</strong>
+            <p class="muted" id="weekPreview">Mon: Roti, Aloo | Tue: Chole | Wed: Paneer | Thu: Rice & Dal | Fri: Mix Veg</p>
+          </div>
+
+          <div class="card">
+            <strong>Saved Preferences</strong>
+            <p class="muted" id="prefsList">No preferences saved yet.</p>
+          </div>
+        </section>
+      </main>
+
+      <aside class="right">
+        <div class="card">
+          <strong>Delivery Tracker</strong>
+          <div class="muted" style="margin-top:8px">Status: <span id="deliveryStatus">Preparing</span></div>
+          <div class="progress" style="margin-top:10px"><div id="progressBar" style="width:0%"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px">
+            <div class="small-muted">Est. arrival</div>
+            <div id="eta" class="small-muted">—</div>
+          </div>
+          <div style="margin-top:10px">
+            <button class="btn small" id="simulateDelivery">Simulate Delivery</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <strong>Feedback Snapshot</strong>
+          <div id="snapshot" style="margin-top:10px">
+            <div class="muted">No feedback yet</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <strong>Quick Stats</strong>
+          <div style="margin-top:8px" id="stats">
+            <div class="muted">On-time deliveries: <strong id="onTime">—</strong></div>
+            <div class="muted">Users preferring less oil: <strong id="prefOil">—</strong></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      MessMate
+    </footer>
+  </div>
+
+  <!-- Modal backdrops -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="modalTitle">Modal</strong>
+        <button class="btn ghost small" id="closeModal">Close</button>
+      </div>
+      <div id="modalContent" style="margin-top:12px">
+        <!-- injected -->
+      </div>
+    </div>
+  </div>
+
+<script>
+/* -------------------------
+  Simple client-side prototype logic
+   - Uses localStorage to persist
+   - Simulates delivery progression
+---------------------------*/
+
+const sampleMenu = [
+  {title: "Paneer Masala", desc: "Paneer curry • 1 roti / 2 rotis"},
+  {title: "Dal Tadka", desc: "Yellow dal tempered with ghee"},
+  {title: "Jeera Rice", desc: "Fragrant basmati rice"},
+  {title: "Salad & Curd", desc: "Fresh cucumber salad + curd"}
+];
+
+const weekly = "Mon: Roti & Sabzi • Tue: Chole • Wed: Paneer • Thu: Rice & Dal • Fri: Mix Veg";
+document.getElementById('weekPreview').textContent = weekly;
+
+const menuRow = document.getElementById('menuRow');
+function renderMenu(){
+  menuRow.innerHTML = "";
+  sampleMenu.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'menu-card';
+    el.innerHTML = `<h3>${it.title}</h3><p class="muted">${it.desc}</p>`;
+    menuRow.appendChild(el);
+  });
+}
+renderMenu();
+
+/* UI elements */
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalContent = document.getElementById('modalContent');
+const modalTitle = document.getElementById('modalTitle');
+const closeModal = document.getElementById('closeModal');
+
+document.getElementById('customizeBtn').addEventListener('click', openCustomize);
+document.getElementById('quickRate').addEventListener('click', openRating);
+document.getElementById('trackBtn').addEventListener('click', openTracker);
+document.getElementById('contactBtn').addEventListener('click', openContact);
+document.getElementById('btnLogin').addEventListener('click', openLogin);
+document.getElementById('btnOwner').addEventListener('click', toggleOwnerView);
+closeModal.addEventListener('click', closeModalFn);
+modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) closeModalFn(); });
+
+function openModal(title, html){
+  modalTitle.textContent = title;
+  modalContent.innerHTML = html;
+  modalBackdrop.style.display = 'flex';
+  modalBackdrop.setAttribute('aria-hidden','false');
+}
+function closeModalFn(){ modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true'); }
+
+/* ---------- Preferences saved to localStorage ---------- */
+function getPrefs(){ return JSON.parse(localStorage.getItem('mm_prefs')||'{}'); }
+function savePrefs(p){ localStorage.setItem('mm_prefs', JSON.stringify(p)); updatePrefsUI(); updateStats(); }
+
+function updatePrefsUI(){
+  const p = getPrefs();
+  const el = document.getElementById('prefsList');
+  if(!p || Object.keys(p).length===0){ el.textContent = "No preferences saved yet."; return; }
+  const parts = [];
+  if(p.spice) parts.push('Spice: '+p.spice);
+  if(p.oil) parts.push('Oil: '+p.oil);
+  if(p.type) parts.push(p.type);
+  el.textContent = parts.join(' • ');
+}
+updatePrefsUI();
+
+/* ---------- Rating / Feedback ---------- */
+function openRating(){
+  const html = `
+    <div>
+      <p class="muted">Rate today's meal</p>
+      <div style="margin-top:8px" id="ratingStars" class="stars">
+        <i class="fa-regular fa-star" data-star="1"></i>
+        <i class="fa-regular fa-star" data-star="2"></i>
+        <i class="fa-regular fa-star" data-star="3"></i>
+        <i class="fa-regular fa-star" data-star="4"></i>
+        <i class="fa-regular fa-star" data-star="5"></i>
+      </div>
+      <div style="margin-top:12px">
+        <label>Quick tags</label>
+        <div id="tagsRow">
+          <span class="tag" data-tag="Too spicy">Too spicy</span>
+          <span class="tag" data-tag="Too oily">Too oily</span>
+          <span class="tag" data-tag="Late delivery">Late delivery</span>
+          <span class="tag" data-tag="Loved it">Loved it</span>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <label>Comments</label>
+        <textarea id="feedbackText" rows="3" style="width:100%;border-radius:8px;padding:8px"></textarea>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" id="submitFeedback">Submit Feedback</button>
+        <button class="btn ghost" id="cancelFeedback">Cancel</button>
+      </div>
+    </div>
+  `;
+  openModal("Rate Today's Meal", html);
+
+  let selected = 0;
+  const stars = document.querySelectorAll('#ratingStars i');
+  stars.forEach(s=>{
+    s.addEventListener('click', ()=> {
+      selected = Number(s.dataset.star);
+      stars.forEach(x=> x.className = x.dataset.star <= selected ? 'fa-solid fa-star' : 'fa-regular fa-star' );
+    });
+  });
+
+  document.querySelectorAll('#tagsRow .tag').forEach(t=>{
+    t.addEventListener('click', ()=> { t.classList.toggle('active'); t.style.background = t.style.background ? '' : 'rgba(6,182,212,0.08)'; });
+  });
+
+  document.getElementById('submitFeedback').addEventListener('click', ()=>{
+    const tags = Array.from(document.querySelectorAll('#tagsRow .tag.active')).map(x=>x.dataset.tag);
+    const comments = document.getElementById('feedbackText').value.trim();
+    const feedbacks = JSON.parse(localStorage.getItem('mm_feedbacks')||'[]');
+    feedbacks.push({stars:selected||5,tags,comments,at: new Date().toISOString()});
+    localStorage.setItem('mm_feedbacks', JSON.stringify(feedbacks));
+    closeModalFn();
+    renderSnapshot();
+    updateStats();
+    alert('Thanks — your feedback was saved!');
+  });
+  document.getElementById('cancelFeedback').addEventListener('click', closeModalFn);
+}
+
+function renderSnapshot(){
+  const snaps = document.getElementById('snapshot');
+  const fb = JSON.parse(localStorage.getItem('mm_feedbacks')||'[]');
+  if(fb.length===0){ snaps.innerHTML = '<div class="muted">No feedback yet</div>'; return; }
+  const last = fb.slice(-3).reverse();
+  snaps.innerHTML = last.map(f=>`<div style="margin-bottom:8px"><strong>${'★'.repeat(f.stars)}${'☆'.repeat(5-f.stars)}</strong><div class="muted" style="font-size:13px">${(f.tags||[]).join(' • ')} ${f.comments?'<br/>'+f.comments:''}</div></div>`).join('');
+}
+renderSnapshot();
+
+/* ---------- Customize modal ---------- */
+function openCustomize(){
+  const p = getPrefs();
+  const html = `
+    <div>
+      <label>Spice level</label>
+      <select id="spice">
+        <option value="Less" ${p.spice==='Less'?'selected':''}>Less Spicy</option>
+        <option value="Normal" ${p.spice==='Normal'?'selected':''}>Normal</option>
+        <option value="High" ${p.spice==='High'?'selected':''}>High</option>
+      </select>
+
+      <label style="margin-top:8px">Oil</label>
+      <select id="oil">
+        <option value="Low" ${p.oil==='Low'?'selected':''}>Low Oil</option>
+        <option value="Normal" ${p.oil==='Normal'?'selected':''}>Normal</option>
+      </select>
+
+      <label style="margin-top:8px">Diet / Type</label>
+      <select id="type">
+        <option value="Veg" ${p.type==='Veg'?'selected':''}>Veg</option>
+        <option value="Jain" ${p.type==='Jain'?'selected':''}>Jain</option>
+        <option value="Non-Veg" ${p.type==='Non-Veg'?'selected':''}>Non-Veg</option>
+      </select>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" id="savePref">Save Preferences</button>
+        <button class="btn ghost" id="saveToday">Apply for Today</button>
+      </div>
+    </div>
+  `;
+  openModal('Customize Your Meal', html);
+
+  document.getElementById('savePref').addEventListener('click', ()=>{
+    const prefs = {
+      spice: document.getElementById('spice').value,
+      oil: document.getElementById('oil').value,
+      type: document.getElementById('type').value
+    };
+    savePrefs(prefs);
+    closeModalFn();
+    alert('Preferences saved for your account.');
+  });
+  document.getElementById('saveToday').addEventListener('click', ()=>{
+    // temporary: not persisted beyond today
+    const prefs = {
+      spice: document.getElementById('spice').value,
+      oil: document.getElementById('oil').value,
+      type: document.getElementById('type').value,
+      todayOnly:true
+    };
+    // show toast:
+    closeModalFn();
+    alert('Preferences applied for today only.');
+  });
+}
+
+/* ---------- Tracker ---------- */
+const progressBar = document.getElementById('progressBar');
+const deliveryStatus = document.getElementById('deliveryStatus');
+const eta = document.getElementById('eta');
+
+let deliveryStage = 0; // 0 preparing,1 ready,2 out,3 delivered
+function openTracker(){
+  openModal('Delivery Tracker', `<div style="padding:6px">
+    <div class="muted">Current status: <strong id="modalStatus">${deliveryStatus.textContent}</strong></div>
+    <div style="margin-top:10px" class="progress"><div id="modalProgress" style="width:${progressBar.style.width}"></div></div>
+    <div style="margin-top:12px"><button class="btn" id="advance">Advance Status</button> <button class="btn ghost" id="reset">Reset</button></div>
+  </div>`);
+  document.getElementById('advance').addEventListener('click', ()=>{
+    advanceDelivery();
+    document.getElementById('modalStatus').textContent = deliveryStatus.textContent;
+    document.getElementById('modalProgress').style.width = progressBar.style.width;
+  });
+  document.getElementById('reset').addEventListener('click', ()=>{ resetDelivery(); document.getElementById('modalStatus').textContent = deliveryStatus.textContent; document.getElementById('modalProgress').style.width = progressBar.style.width; });
+}
+
+document.getElementById('simulateDelivery').addEventListener('click', simulateSequence);
+
+function simulateSequence(){
+  // progressive simulation
+  deliveryStage = 0; setDelivery(0);
+  setTimeout(()=>{ setDelivery(1); }, 1000);
+  setTimeout(()=>{ setDelivery(2); }, 3000);
+  setTimeout(()=>{ setDelivery(3); }, 6000);
+}
+function setDelivery(stage){
+  deliveryStage=stage;
+  if(stage===0){ deliveryStatus.textContent='Preparing'; progressBar.style.width='12%'; eta.textContent='20-30 min'; }
+  if(stage===1){ deliveryStatus.textContent='Ready'; progressBar.style.width='38%'; eta.textContent='15-20 min'; }
+  if(stage===2){ deliveryStatus.textContent='Out for delivery'; progressBar.style.width='72%'; eta.textContent='10-15 min'; }
+  if(stage===3){ deliveryStatus.textContent='Delivered'; progressBar.style.width='100%'; eta.textContent='Arrived'; }
+}
+function advanceDelivery(){ setDelivery(Math.min(3, deliveryStage+1)); }
+function resetDelivery(){ setDelivery(0); }
+
+/* ---------- Contact Mess ---------- */
+function openContact(){
+  openModal('Contact Mess', `<div><p class="muted">Prefer contact via WhatsApp or call</p>
+    <div style="display:flex;gap:8px;margin-top:8px"><a class="btn" href="https://wa.me/919999999999" target="_blank">WhatsApp</a><button class="btn ghost" id="callBtn">Call</button></div>
+  </div>`);
+  document.getElementById('callBtn').addEventListener('click', ()=>alert('Calling mock number...'));
+}
+
+/* ---------- Login (mocked) ---------- */
+function openLogin(){
+  const html = `<div>
+    <label>Email or Phone</label>
+    <input id="loginName" type="text" placeholder="ananya@example.com or 9876543210" />
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button class="btn" id="doLogin">Login</button>
+      <button class="btn ghost" id="doSignup">Sign up</button>
+    </div>
+  </div>`;
+  openModal('Login / Signup', html);
+  document.getElementById('doLogin').addEventListener('click', ()=>{
+    const val = document.getElementById('loginName').value.trim() || 'Ananya Sharma';
+    localStorage.setItem('mm_user', JSON.stringify({name:val}));
+    closeModalFn();
+    updateUserUI();
+  });
+  document.getElementById('doSignup').addEventListener('click', ()=>{ alert('Signup flow (mock) — saved as user.'); const val = document.getElementById('loginName').value.trim() || 'New User'; localStorage.setItem('mm_user', JSON.stringify({name:val})); closeModalFn(); updateUserUI(); });
+}
+function updateUserUI(){
+  const u = JSON.parse(localStorage.getItem('mm_user')||'null');
+  const ui = document.getElementById('userInfo');
+  const btnLogin = document.getElementById('btnLogin');
+  if(u){ ui.textContent = u.name; btnLogin.textContent='Logout'; btnLogin.onclick = ()=>{ localStorage.removeItem('mm_user'); updateUserUI(); };
+  } else { ui.textContent = 'Not logged in'; btnLogin.textContent='Login'; btnLogin.onclick = openLogin; }
+}
+updateUserUI();
+
+/* ---------- Owner/Admin view ---------- */
+let ownerView = false;
+function toggleOwnerView(){
+  ownerView = !ownerView;
+  document.getElementById('btnOwner').textContent = ownerView ? 'User View' : 'Owner View';
+  if(ownerView) showOwnerDashboard();
+  else hideOwnerDashboard();
+}
+function showOwnerDashboard(){
+  // quick aggregated view
+  const adminHtml = `<div>
+    <strong>Owner Dashboard</strong>
+    <p class="muted" style="margin-top:8px">Top complaints & preferences</p>
+    <div id="adminList" style="margin-top:8px"></div>
+    <div style="margin-top:10px">
+      <button class="btn" id="ownerClose">Close</button>
+    </div>
+  </div>`;
+  openModal('Owner Dashboard', adminHtml);
+  renderAdmin();
+  document.getElementById('ownerClose').addEventListener('click', ()=>{ closeModalFn(); toggleOwnerView(); });
+}
+function hideOwnerDashboard(){ /* nothing */ }
+
+function renderAdmin(){
+  const adminList = document.getElementById('adminList');
+  const fb = JSON.parse(localStorage.getItem('mm_feedbacks')||'[]');
+  const prefs = JSON.parse(localStorage.getItem('mm_prefs')||'{}');
+
+  // top complaints
+  const tags = fb.flatMap(f => f.tags || []);
+  const counts = tags.reduce((acc,t)=>{ acc[t]=(acc[t]||0)+1; return acc; },{});
+  const tagHtml = Object.keys(counts).length===0? '<div class="muted">No complaints yet</div>' : Object.entries(counts).map(([k,v])=>`<div style="margin-bottom:6px"><strong>${k}</strong> — ${v}</div>`).join('');
+  adminList.innerHTML = `<div style="margin-top:8px"><strong>Top Tags</strong>${tagHtml}</div>
+    <div style="margin-top:12px"><strong>Saved preferences summary</strong><div class="muted" style="margin-top:6px">${Object.keys(prefs).length? JSON.stringify(prefs): 'No preferences yet'}</div></div>`;
+}
+
+/* ---------- Stats ---------- */
+function updateStats(){
+  const fb = JSON.parse(localStorage.getItem('mm_feedbacks')||'[]');
+  const onTime = Math.round((Math.random()*70)+20); // placeholder
+  document.getElementById('onTime').textContent = onTime + '%';
+  const prefs = JSON.parse(localStorage.getItem('mm_prefs')||'{}');
+  document.getElementById('prefOil').textContent = prefs.oil === 'Low' ? 'Yes' : (prefs.oil ? prefs.oil : '—');
+}
+updateStats();
+
+/* initial delivery state */
+resetDelivery();
+renderSnapshot();
+
+</script>
+</body>
+</html>
